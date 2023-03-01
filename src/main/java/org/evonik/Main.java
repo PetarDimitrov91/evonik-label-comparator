@@ -1,8 +1,11 @@
 package org.evonik;
 
+import org.evonik.core.Application;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        final Application app = new Application();
+        app.run();
     }
 }
 
