@@ -21,10 +21,10 @@ public class Application implements Runnable {
 
         int translationSelection = Integer.parseInt(console.nextLine());
 
-        String p1File = "/home/developer/Desktop/label-translations/p1.csv";
-        String s1File = "/home/developer/Desktop/label-translations/s1.csv";
-        String csvOutputFile = "/home/developer/Desktop/label-translations";
-        String htmlOutputFile = "/home/developer/Desktop/label-translations";
+        String p1File = "/home/developer/Desktop/email-translations/p1-email.csv";
+        String s1File = "/home/developer/Desktop/email-translations/s1-email.csv";
+        String csvOutputFile = "/home/developer/Desktop/email-translations";
+        String htmlOutputFile = "/home/developer/Desktop/email-translations";
 
         try {
             if (translationSelection == 1) {
@@ -75,5 +75,10 @@ public class Application implements Runnable {
                 .stream()
                 .sorted((EmailMessageTranslation::compareTo))
                 .toList();
+
+        lines = comparator.findNotExistingEmailMessageTranslationsInP1(lines, emailMessagesP1, emailMessagesS1);
+        lines = comparator.findDiffsInEmailMessageTranslation(lines, emailMessagesP1, emailMessagesS1);
+
+        EmailMessageTranslation.writeHtml(htmlOutputFile, lines);
     }
 }

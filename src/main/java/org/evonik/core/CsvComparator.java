@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import org.apache.commons.lang3.StringUtils;
 import org.evonik.enums.Lang;
+import org.evonik.models.EmailMessageTranslation;
 import org.evonik.models.StorefrontLabel;
 import org.evonik.models.Translation;
 
@@ -52,7 +53,31 @@ public class CsvComparator<T extends Translation> {
             }
 
             if (!matchFound) {
-                lines.put(keyS1, new String[]{" ------ Match not found", "", ""});
+                lines.put(keyS1, new String[]{" ------ Match not found", "", "", ""});
+            }
+        }
+
+        return lines;
+    }
+
+    public Map<String, String[]> findNotExistingEmailMessageTranslationsInP1(Map<String, String[]> lines, List<EmailMessageTranslation> p1, List<EmailMessageTranslation> s1) {
+        for (EmailMessageTranslation translationS1 : s1) {
+            boolean matchFound = false;
+            String keyS1 = translationS1.getKey();
+            String emailPageS1 = translationS1.getEmailPages();
+
+            for (EmailMessageTranslation translationP1 : p1) {
+                String keyP1 = translationP1.getKey();
+                String emailPagesP1 = translationP1.getEmailPages();
+
+                if (keyS1.equals(keyP1) && emailPageS1.equals(emailPagesP1)) {
+                    matchFound = true;
+                    break;
+                }
+            }
+
+            if (!matchFound) {
+                lines.put(emailPageS1 + " -> " + keyS1, new String[]{keyS1 , " ------ Match not found in P1", "", ""});
             }
         }
 
@@ -74,7 +99,7 @@ public class CsvComparator<T extends Translation> {
                 if (keyP1.equals(keyS1)) {
                     counter++;
 
-                    compareProps(lines, recordP1, recordS1, keyP1, keyS1);
+                    compareProps(lines, recordP1, recordS1, keyP1);
                 }
             }
         }
@@ -84,7 +109,108 @@ public class CsvComparator<T extends Translation> {
         return lines;
     }
 
-    private void compareProps(Map<String, String[]> lines, Translation recordP1, Translation recordS1, String keyP1, String keyS1) {
+    public Map<String, String[]> findDiffsInEmailMessageTranslation(Map<String, String[]> lines, List<EmailMessageTranslation> p1, List<EmailMessageTranslation> s1) {
+        int smallerFile = Math.min(p1.size(), s1.size());
+
+        int counter = 0;
+
+        for (int i = 0; i < smallerFile; i++) {
+            EmailMessageTranslation recordP1 = p1.get(i);
+            String keyP1 = recordP1.getKey();
+            String emailPageP1 = recordP1.getEmailPages();
+
+            for (int j = 0; j < smallerFile; j++) {
+                EmailMessageTranslation recordS1 = s1.get(j);
+                String keyS1 = recordS1.getKey();
+                String emailPageS1 = recordS1.getEmailPages();
+
+                if (keyP1.equals(keyS1) && emailPageP1.equals(emailPageS1)) {
+                    counter++;
+
+                    compareProps(lines, emailPageP1, recordP1, recordS1, keyP1);
+                }
+            }
+        }
+
+        lines.put("Matches found", new String[]{String.format("%d", counter), "", "", ""});
+
+        return lines;
+    }
+
+    private void compareProps(Map<String, String[]> lines, String emailPage, Translation recordP1, Translation recordS1, String keyP1) {
+        String diffLangEN = StringUtils.difference(recordP1.getContentEN().trim(), recordS1.getContentEN().trim());
+
+        if (diffLangEN.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.EN, new String[]{keyP1, recordP1.getContentEN(), recordS1.getContentEN(), Lang.EN.toString()});
+        }
+
+        String diffLangDE = StringUtils.difference(recordP1.getContentDE().trim(), recordS1.getContentDE().trim());
+        if (diffLangDE.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.DE, new String[]{keyP1, recordP1.getContentDE(), recordS1.getContentDE(), Lang.DE.toString()});
+        }
+
+        String diffLangIT = StringUtils.difference(recordP1.getContentIT().trim(), recordS1.getContentIT().trim());
+        if (diffLangIT.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.IT, new String[]{keyP1, recordP1.getContentIT(), recordS1.getContentIT(), Lang.IT.toString()});
+        }
+
+        String diffLangES = StringUtils.difference(recordP1.getContentES().trim(), recordS1.getContentES().trim());
+        if (diffLangES.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.ES, new String[]{keyP1, recordP1.getContentES(), recordS1.getContentES(), Lang.ES.toString()});
+        }
+
+        String diffLangRU = StringUtils.difference(recordP1.getContentRU().trim(), recordS1.getContentRU().trim());
+        if (diffLangRU.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.RU, new String[]{keyP1, recordP1.getContentRU(), recordS1.getContentRU(), Lang.RU.toString()});
+        }
+
+        String diffLangTR = StringUtils.difference(recordP1.getContentTR().trim(), recordS1.getContentTR().trim());
+        if (diffLangTR.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.TR, new String[]{keyP1, recordP1.getContentTR(), recordS1.getContentTR(), Lang.TR.toString()});
+        }
+
+        String diffLangPL = StringUtils.difference(recordP1.getContentPL().trim(), recordS1.getContentPL().trim());
+        if (diffLangPL.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.PL, new String[]{keyP1, recordP1.getContentPL(), recordS1.getContentPL(), Lang.PL.toString()});
+        }
+
+        String diffLangHU = StringUtils.difference(recordP1.getContentHU().trim(), recordS1.getContentHU().trim());
+        if (diffLangHU.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.HU, new String[]{keyP1, recordP1.getContentHU(), recordS1.getContentHU(), Lang.HU.toString()});
+        }
+
+        String diffLangFR = StringUtils.difference(recordP1.getContentFR().trim(), recordS1.getContentFR().trim());
+        if (diffLangFR.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.FR, new String[]{keyP1, recordP1.getContentFR(), recordS1.getContentFR(), Lang.FR.toString()});
+        }
+
+        String diffLangJA = StringUtils.difference(recordP1.getContentJA().trim(), recordS1.getContentJA().trim());
+        if (diffLangJA.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.JA, new String[]{keyP1, recordP1.getContentJA(), recordS1.getContentJA(), Lang.JA.toString()});
+        }
+
+        String diffLangZH = StringUtils.difference(recordP1.getContentZH().trim(), recordS1.getContentZH().trim());
+        if (diffLangZH.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.ZH, new String[]{keyP1, recordP1.getContentZH(), recordS1.getContentZH(), Lang.ZH.toString()});
+        }
+
+        String diffLangKO = StringUtils.difference(recordP1.getContentKO().trim(), recordS1.getContentKO().trim());
+        if (diffLangKO.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.KO, new String[]{keyP1, recordP1.getContentKO(), recordS1.getContentKO(), Lang.KO.toString()});
+        }
+
+        String diffLangRO = StringUtils.difference(recordP1.getContentRO().trim(), recordS1.getContentRO().trim());
+        if (diffLangRO.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.RO, new String[]{keyP1, recordP1.getContentRO(), recordS1.getContentRO(), Lang.RO.toString()});
+        }
+
+        String diffLangCS = StringUtils.difference(recordP1.getContentCS().trim(), recordS1.getContentCS().trim());
+        if (diffLangCS.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.CS, new String[]{keyP1, recordP1.getContentCS(), recordS1.getContentCS(), Lang.CS.toString()});
+        }
+    }
+
+    private void compareProps(Map<String, String[]> lines, Translation recordP1, Translation recordS1, String keyP1) {
         String diffLangEN = StringUtils.difference(recordP1.getContentEN().trim(), recordS1.getContentEN().trim());
 
         if (diffLangEN.length() > 0) {

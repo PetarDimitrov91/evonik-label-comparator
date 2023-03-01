@@ -4,7 +4,6 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 
 public class EmailMessageTranslation extends Translation implements Comparable<EmailMessageTranslation> {
@@ -23,7 +22,7 @@ public class EmailMessageTranslation extends Translation implements Comparable<E
         printer.println("<head>");
         printer.println("<title>My HTML Table</title>");
         printer.println("<style>");
-        printer.println("table { border-collapse: collapse; }");
+        printer.println("table { border-collapse: collapse; width: 100%; }");
         printer.println("table, th, td { border: 1px solid black; }");
         printer.println("th, td { padding: 5px; }");
         printer.println(".linenum { background-color: #F0F0F0; font-weight: bold; }");
@@ -52,8 +51,8 @@ public class EmailMessageTranslation extends Translation implements Comparable<E
 
             String[] output = new String[5];
 
-            System.arraycopy(keyArr, 0, output, 1, 1); // insert the new column at index 1
-            System.arraycopy(values, 0, output, 2, 3); // shift the other columns by 1
+            System.arraycopy(keyArr, 0, output, 0, 1);
+            System.arraycopy(values, 0, output, 1, 4);
 
             printer.println("<tr>");
             printer.println("<td class=\"linenum\">" + lineNumber++ + "</td>");

@@ -24,7 +24,7 @@ public abstract class Translation {
     private String contentCS;
 
     public Translation(CSVRecord record, int startIndex) {
-        this.key = record.get(0);
+        this.key = record.get(startIndex);
         this.contentEN = record.get(startIndex + 1);
         this.contentDE = record.get(startIndex + 2);
         this.contentIT = record.get(startIndex + 3);
