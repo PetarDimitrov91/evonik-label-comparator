@@ -20,6 +20,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CsvComparator<T extends Translation> {
+    private static final String CARE_SOLUTIONS_US_CATALOG = "caresolutions-us-ContentCatalog";
+
     public CsvComparator() {
     }
 
@@ -66,6 +68,10 @@ public class CsvComparator<T extends Translation> {
             String keyS1 = translationS1.getKey();
             String emailPageS1 = translationS1.getEmailPages();
 
+            if (emailPageS1.contains(CARE_SOLUTIONS_US_CATALOG)) {
+                continue;
+            }
+
             for (EmailMessageTranslation translationP1 : p1) {
                 String keyP1 = translationP1.getKey();
                 String emailPagesP1 = translationP1.getEmailPages();
@@ -77,7 +83,7 @@ public class CsvComparator<T extends Translation> {
             }
 
             if (!matchFound) {
-                lines.put(emailPageS1 + " -> " + keyS1, new String[]{keyS1 , " ------ Match not found in P1", "", ""});
+                lines.put(emailPageS1 + " -> " + keyS1, new String[]{keyS1, " ------ Match not found in P1", "", ""});
             }
         }
 
@@ -118,6 +124,12 @@ public class CsvComparator<T extends Translation> {
             EmailMessageTranslation recordP1 = p1.get(i);
             String keyP1 = recordP1.getKey();
             String emailPageP1 = recordP1.getEmailPages();
+
+
+            if (emailPageP1.contains(CARE_SOLUTIONS_US_CATALOG)) {
+                counter++;
+                continue;
+            }
 
             for (int j = 0; j < smallerFile; j++) {
                 EmailMessageTranslation recordS1 = s1.get(j);
