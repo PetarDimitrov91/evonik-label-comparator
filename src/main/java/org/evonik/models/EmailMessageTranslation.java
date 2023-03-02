@@ -1,5 +1,7 @@
 package org.evonik.models;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
@@ -67,6 +69,25 @@ public class EmailMessageTranslation extends Translation implements Comparable<E
         printer.println("</table>");
         printer.println("</body>");
         printer.println("</html>");
+
+        printer.flush();
+        writer.close();
+    }
+
+    public static void writeCsv(String outputFileDir, Map<String, String[]> lines) throws IOException {
+        FileWriter writer = new FileWriter(outputFileDir + "/emailMessageDifferences.csv", StandardCharsets.UTF_8);
+        CSVPrinter printer = new CSVPrinter(writer,
+                CSVFormat.DEFAULT
+                        .withHeader("EmailPage", "Key", "P1 Value", "S1 Value", "Language")
+                        .withDelimiter(';'));
+
+        for (var entry : lines.entrySet()) {
+            String emailPage = entry.getKey();
+            String[] values = entry.getValue();
+            String key = values[0];
+
+            printer.printRecord(emailPage, key, values[0], values[1], values[2]);
+        }
 
         printer.flush();
         writer.close();

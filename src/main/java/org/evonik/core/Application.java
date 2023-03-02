@@ -12,32 +12,38 @@ import java.util.Scanner;
 
 
 public class Application implements Runnable {
-    private static Map<String, String[]> lines = new LinkedHashMap<>();
+    private static Map<String, String[]> storefrontLines = new LinkedHashMap<>();
+    private static Map<String, String[]> emailMessageTrnsLines = new LinkedHashMap<>();
 
     @Override
     public void run() {
         Scanner console = new Scanner(System.in);
-        System.out.println("What do you want to compare?\nType 1 for Storefront Labels\nType 2 for EmailMessageTranslation");
+        System.out.println("What do you want to compare?\nType 1 for Storefront Labels\nType 2 for EmailMessageTranslation\nType 3 for both");
 
         int translationSelection = Integer.parseInt(console.nextLine());
 
-        String p1File = "/home/developer/Desktop/email-translations/p1-email.csv";
-        String s1File = "/home/developer/Desktop/email-translations/s1-email.csv";
-        String csvOutputFile = "/home/developer/Desktop/email-translations";
-        String htmlOutputFile = "/home/developer/Desktop/email-translations";
+        String p1LabelTrnsFile = "/home/developer/Desktop/label-translations/p1.csv";
+        String s1LabelTrnsFile = "/home/developer/Desktop/label-translations/s1.csv";
+        String p1EmailTrnsFile = "/home/developer/Desktop/email-translations/p1-email.csv";
+        String s1EmailTrnsFile = "/home/developer/Desktop/email-translations/s1-email.csv";
+        String labelsOutputDir = "/home/developer/Desktop/label-translations";
+        String emailTranslationsOutputDir = "/home/developer/Desktop/email-translations";
 
         try {
             if (translationSelection == 1) {
-                compareStorefrontLabels(p1File, s1File, csvOutputFile, htmlOutputFile);
+                compareStorefrontLabels(p1LabelTrnsFile, s1LabelTrnsFile, labelsOutputDir);
             } else if (translationSelection == 2) {
-                compareEmailMessageTranslation(p1File, s1File, csvOutputFile, htmlOutputFile);
+                compareEmailMessageTranslation(p1EmailTrnsFile, s1EmailTrnsFile, emailTranslationsOutputDir);
+            } else {
+                compareStorefrontLabels(p1LabelTrnsFile, s1LabelTrnsFile, labelsOutputDir);
+                compareEmailMessageTranslation(p1EmailTrnsFile, s1EmailTrnsFile, emailTranslationsOutputDir);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void compareStorefrontLabels(String p1File, String s1File, String csvOutputFile, String htmlOutputFile) throws IOException {
+    private void compareStorefrontLabels(String p1File, String s1File, String outputDir) throws IOException {
         final CsvComparator<StorefrontLabel> comparator = new CsvComparator<>();
 
         List<CSVRecord> p1Records = comparator.readCsv(p1File);
@@ -53,14 +59,15 @@ public class Application implements Runnable {
                 .sorted((StorefrontLabel::compareTo))
                 .toList();
 
-        lines = comparator.findNotExistingPropsInP1(lines, storefrontLabelsP1, storefrontLabelsS1);
-        lines = comparator.findDiffsInStoreFrontLabel(lines, storefrontLabelsP1, storefrontLabelsS1);
+        storefrontLines = comparator.findNotExistingPropsInP1(storefrontLines, storefrontLabelsP1, storefrontLabelsS1);
+        storefrontLines = comparator.findDiffsInStoreFrontLabel(storefrontLines, storefrontLabelsP1, storefrontLabelsS1);
 
-        StorefrontLabel.writeHtml(htmlOutputFile, lines);
+        StorefrontLabel.writeHtml(outputDir, storefrontLines);
+        StorefrontLabel.writeCSV(outputDir, storefrontLines);
     }
 
 
-    private void compareEmailMessageTranslation(String p1File, String s1File, String csvOutputFile, String htmlOutputFile) throws IOException {
+    private void compareEmailMessageTranslation(String p1File, String s1File, String outputDir) throws IOException {
         final CsvComparator<EmailMessageTranslation> comparator = new CsvComparator<>();
 
         List<CSVRecord> p1Records = comparator.readCsv(p1File);
@@ -76,9 +83,10 @@ public class Application implements Runnable {
                 .sorted((EmailMessageTranslation::compareTo))
                 .toList();
 
-        lines = comparator.findNotExistingEmailMessageTranslationsInP1(lines, emailMessagesP1, emailMessagesS1);
-        lines = comparator.findDiffsInEmailMessageTranslation(lines, emailMessagesP1, emailMessagesS1);
+        emailMessageTrnsLines = comparator.findNotExistingEmailMessageTranslationsInP1(emailMessageTrnsLines, emailMessagesP1, emailMessagesS1);
+        emailMessageTrnsLines = comparator.findDiffsInEmailMessageTranslation(emailMessageTrnsLines, emailMessagesP1, emailMessagesS1);
 
-        EmailMessageTranslation.writeHtml(htmlOutputFile, lines);
+        EmailMessageTranslation.writeHtml(outputDir, emailMessageTrnsLines);
+        EmailMessageTranslation.writeCsv(outputDir, emailMessageTrnsLines);
     }
 }

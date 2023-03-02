@@ -1,15 +1,20 @@
 package org.evonik.models;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 public class StorefrontLabel extends Translation implements Comparable<StorefrontLabel> {
     public StorefrontLabel(CSVRecord record) {
         super(record, 0);
     }
+
     public static void writeHtml(String outputFileDir, Map<String, String[]> lines) throws IOException {
         Writer writer = new BufferedWriter(new FileWriter(outputFileDir + "/labelDifferences.html", StandardCharsets.UTF_8));
         PrintWriter printer = new PrintWriter(writer);
@@ -64,6 +69,25 @@ public class StorefrontLabel extends Translation implements Comparable<Storefron
         printer.println("</html>");
 
         printer.flush();
+        writer.close();
+    }
+
+    public static void writeCSV(String outputFileDir, Map<String, String[]> lines) throws IOException {
+        Writer writer = Files.newBufferedWriter(Paths.get(outputFileDir, "labelDifferences.csv"), StandardCharsets.UTF_8);
+        CSVPrinter csvPrinter = new CSVPrinter(writer,
+                CSVFormat.DEFAULT
+                        .withHeader("Key", "P1 Value", "S1 Value", "Language")
+                        .withDelimiter(';')
+        );
+
+        for (var entry : lines.entrySet()) {
+            String key = entry.getKey();
+            String[] values = entry.getValue();
+
+            csvPrinter.printRecord(key, values[0], values[1], values[2]);
+        }
+
+        csvPrinter.flush();
         writer.close();
     }
 
