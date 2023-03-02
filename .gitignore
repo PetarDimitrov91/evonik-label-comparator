@@ -43,6 +43,8 @@ hs_err_pid*
 .idea/jarRepositories.xml
 .idea/misc.xml
 .idea/vcs.xml
+.idea/consolestorage/**
+.idea/inspectionProfiles/**
 
 # AWS User-specific
 .idea/**/aws.xml
