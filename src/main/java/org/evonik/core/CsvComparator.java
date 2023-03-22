@@ -220,6 +220,11 @@ public class CsvComparator<T extends Translation> {
         if (diffLangCS.length() > 0) {
             lines.put(emailPage + " -- " + Lang.CS, new String[]{keyP1, recordP1.getContentCS(), recordS1.getContentCS(), Lang.CS.toString()});
         }
+
+        String diffLangPT = StringUtils.difference(recordP1.getContentPT().trim(), recordS1.getContentPT().trim());
+        if (diffLangPT.length() > 0) {
+            lines.put(emailPage + " -- " + Lang.PT, new String[]{keyP1, recordP1.getContentPT(), recordS1.getContentPT(), Lang.PT.toString()});
+        }
     }
 
     private void compareProps(Map<String, String[]> lines, Translation recordP1, Translation recordS1, String keyP1) {
@@ -292,6 +297,11 @@ public class CsvComparator<T extends Translation> {
         String diffLangCS = StringUtils.difference(recordP1.getContentCS().trim(), recordS1.getContentCS().trim());
         if (diffLangCS.length() > 0) {
             lines.put(keyP1 + " -- " + Lang.CS, new String[]{recordP1.getContentCS(), recordS1.getContentCS(), Lang.CS.toString()});
+        }
+
+        String diffLangPT = StringUtils.difference(recordP1.getContentPT().trim(), recordS1.getContentPT().trim());
+        if (diffLangPT.length() > 0) {
+            lines.put(keyP1 + " -- " + Lang.PT, new String[]{recordP1.getContentPT(), recordS1.getContentPT(), Lang.PT.toString()});
         }
     }
 }

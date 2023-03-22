@@ -2,10 +2,6 @@ package org.evonik.models;
 
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 public abstract class Translation {
     private String key;
     private String contentEN;
@@ -22,6 +18,7 @@ public abstract class Translation {
     private String contentKO;
     private String contentRO;
     private String contentCS;
+    private String contentPT;
 
     public Translation(CSVRecord record, int startIndex) {
         this.key = record.get(startIndex);
@@ -39,6 +36,7 @@ public abstract class Translation {
         this.contentKO = record.get(startIndex + 12);
         this.contentRO = record.get(startIndex + 13);
         this.contentCS = record.get(startIndex + 14);
+        this.contentPT = record.get(startIndex + 15);
     }
 
     public String getKey() {
@@ -99,5 +97,9 @@ public abstract class Translation {
 
     public String getContentCS() {
         return contentCS;
+    }
+
+    public String getContentPT() {
+        return contentPT;
     }
 }

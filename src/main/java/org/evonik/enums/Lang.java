@@ -14,5 +14,6 @@ public enum Lang {
     ZH,
     KO,
     RO,
-    CS
+    CS,
+    PT
 }
